@@ -45,5 +45,26 @@ namespace DevTrends.MvcDonutCaching.Demo
 
             return container;
         }
+
+        public override string GetVaryByCustomString(HttpContext context, string custom)
+        {
+            if (string.IsNullOrWhiteSpace(custom))
+            {
+                return base.GetVaryByCustomString(context, custom);
+            }
+
+            switch (custom.ToLowerInvariant())
+            {
+                case "user":
+                    var principal = context.User;
+                    if (principal != null)
+                    {
+                        return string.Format("{0}@{1}", principal.Identity.Name, principal.Identity.AuthenticationType);
+                    }
+                    break;
+            }
+
+            return base.GetVaryByCustomString(context, custom);
+        }
     }
 }
